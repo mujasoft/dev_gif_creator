@@ -38,6 +38,7 @@ function usage() {
     echo "  -h --help    print this help text"
     echo "  -i           Input video file (required)"
     echo "  -o           Output base name (optional, default: output)"
+    echo "  -t           Add timestamp to output file"
     echo "  -v --version Print version"
     echo ""
     echo "Examples:"
@@ -102,11 +103,12 @@ fi
 
 
 # Parse CLI arguments.
-while getopts "i:o:hv" opt; do
+while getopts "i:o:thv" opt; do
   case $opt in
     i) INPUT="$OPTARG" ;;
     o) OUTPUT="$OPTARG" ;;
     h) usage ;;
+    t) TIMESTAMP_REQUEST="1"
     v) print_version ;;
     \?) print_red "*** Invalid option -$OPTARG" >&2; usage ;;
     :) print_red "*** Option -$OPTARG requires an argument." >&2; usage ;;
@@ -149,6 +151,10 @@ else
   OUTPUT_BASENAME="$OUTPUT_NAME"
 fi
 
-FINAL_OUTPUT="${OUTPUT_BASENAME}_${TS}.gif"
+if [ -z "$TIMESTAMP_REQUEST" ]; then
+  FINAL_OUTPUT="${OUTPUT_BASENAME}.gif"
+else
+  FINAL_OUTPUT="${OUTPUT_BASENAME}_${TS}.gif"
+fi 
 
 convert_mov_to_gif "$INPUT" "$PALETTE" "$FINAL_OUTPUT"

@@ -12,15 +12,42 @@ Convert video files into **optimized GIFs** using `ffmpeg` — perfect for READM
 
 ![Demo GIF](Demo.gif)
 
+# Why this exists?
+
+- Works **entirely offline** — nothing is ever uploaded
+- Ideal for GitHub project demos, bug reproductions or sharing animations
+- Easier and safer than uploading to unreliable online converters
+
+
 ## Features
 
-- Converts `.mp4`, `.mov`, `.mkv`, `.webm`, and more.
+- Converts `.mp4`, `.mov`, `.mkv`, `.webm`, etc.
 - Uses palette generation for smaller, smoother GIFs.
 - Cleans up temporary files after use.
 - Appends timestamps to avoid overwriting.
 - Fully **offline**, no external dependencies besides `ffmpeg`.
 - Pure Bash implementation — portable & dependency-free (except `ffmpeg`)
 
+## Requirement(s)
+
+[ffmpeg](https://ffmpeg.org) must be installed and in your `$PATH`
+
+```bash
+# macOS (Homebrew)
+brew install ffmpeg
+```
+
+## Installation
+
+### Option 1: Install globally.
+```bash
+chmod +x vid2gif
+mv vid2gif /usr/local/bin/
+```
+### Option 2: Add to path
+```bash
+export PATH="$PATH:/path/to/this/repo"
+```
 
 ## Usage
 
@@ -43,16 +70,6 @@ GIF will be saved as:
 | `-o`                | Output basename (optional, default: `output`)|
 | `-h --help`         | Show help message                            |
 | `-v --version`      | Show tool version                            |
-
-
-## Requirement(s)
-
-[ffmpeg](https://ffmpeg.org) must be installed and in your `$PATH`
-
-```bash
-# macOS (Homebrew)
-brew install ffmpeg
-```
 
 
 
