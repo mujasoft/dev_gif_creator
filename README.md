@@ -12,7 +12,7 @@ Convert video files into **optimized GIFs** using `ffmpeg` — perfect for READM
 
 ![Demo GIF](Demo.gif)
 
-# Why this exists?
+## Why this exists?
 
 - Works **entirely offline** — nothing is ever uploaded
 - Ideal for GitHub project demos, bug reproductions or sharing animations
