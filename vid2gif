@@ -1,4 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# vid2gif - Convert video files (.mp4, .mov, etc.) into optimized GIFs using FFmpeg
+#
+# Author: Mujaheed Khan (https://github.com/mujasoft)
+# License: MIT
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
 
 set -e
 
@@ -10,10 +34,11 @@ function usage() {
     echo "Usage:"
     echo "  $0 -i <input_file> [-o <output_basename>]"
     echo ""
-    echo "Options:"
-    echo "  -h    print this help text"
-    echo "  -i    Input video file (required)"
-    echo "  -o    Output base name (optional, default: output)"
+    echo "Option(s):"
+    echo "  -h --help    print this help text"
+    echo "  -i           Input video file (required)"
+    echo "  -o           Output base name (optional, default: output)"
+    echo "  -v --version Print version"
     echo ""
     echo "Examples:"
     echo "  $0 -i demo.mov"
@@ -26,6 +51,11 @@ function usage() {
 }
 
 convert_mov_to_gif() {
+
+    # In order to increase the quality of the resulting GIF, an intermediate 
+    # palette is generated and used which results in a gif that
+    # has higher resolution with a lower memory footprint.
+
     echo "*** Generating palette..."
     ffmpeg -y -i "$1" -vf "fps=10,scale=640:-1:flags=lanczos,palettegen" "$2"
     echo "*** Done"
@@ -42,6 +72,12 @@ convert_mov_to_gif() {
     print_bold_white "*** GIF saved to: $3"
 }
 
+print_version(){
+  export VERSION="1.0.0.0"
+  echo "vid2gif v$VERSION"
+  exit 0
+}
+
 print_red() {
   echo -e "\033[0;31m$1\033[0m"
 }
@@ -50,14 +86,21 @@ print_bold_white() {
   echo -e "\033[1;37m$1\033[0m"
 }
 
-# -x-
+if [[ "$1" == "--help" ]]; then
+  usage
+fi
+
+if [ "$1" = "--version" ]; then
+  print_version
+fi
 
 # Parse CLI arguments.
-while getopts ":i:o::h" opt; do
+while getopts ":i:o::h:v" opt; do
   case $opt in
     i) INPUT="$OPTARG" ;;
     o) OUTPUT="$OPTARG" ;;
     h) usage ;;
+    v) print_version ;;
     \?) print_red "*** Invalid option -$OPTARG" >&2; usage ;;
     :) print_red "*** Option -$OPTARG requires an argument." >&2; usage ;;
   esac
@@ -73,17 +116,17 @@ case "$INPUT" in
   *.mp4|*.mov|*.avi|*.mkv|*.webm|*.flv|*.m4v|*.ts)
     ;;
   *)
-    print_red "*** Unsupported input format: $INPUT"
-    echo "*** Supported formats: mp4, mov, avi, mkv, webm, flv, m4v, ts"
+    print_red "Unsupported input format!"
+    echo "Supported formats: mp4, mov, avi, mkv, webm, flv, m4v, ts"
     exit 1
     ;;
 esac
 
 # Check if ffmpeg is installed.
 if ! command -v ffmpeg &> /dev/null; then
-  print_red "*** Error: ffmpeg is not installed or not in your PATH."
-  echo "*** Install it using Homebrew (macOS): brew install ffmpeg"
-  echo "*** More: https://ffmpeg.org/download.html"
+  print_red "Error: ffmpeg is not installed or not in your PATH!"
+  echo "Install it using Homebrew (macOS): brew install ffmpeg"
+  echo "More: https://ffmpeg.org/download.html"
   exit 1
 fi
 
