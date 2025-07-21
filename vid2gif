@@ -108,7 +108,7 @@ while getopts "i:o:thv" opt; do
     i) INPUT="$OPTARG" ;;
     o) OUTPUT="$OPTARG" ;;
     h) usage ;;
-    t) TIMESTAMP_REQUEST="1"
+    t) TIMESTAMP_REQUEST="1" ;;
     v) print_version ;;
     \?) print_red "*** Invalid option -$OPTARG" >&2; usage ;;
     :) print_red "*** Option -$OPTARG requires an argument." >&2; usage ;;
