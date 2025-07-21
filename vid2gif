@@ -86,7 +86,13 @@ print_bold_white() {
   echo -e "\033[1;37m$1\033[0m"
 }
 
-if [[ "$1" == "--help" ]]; then
+# Long help flag.
+if [ "$1" = "--help" ]; then
+  usage
+fi
+
+# Show help if no arguments were passed
+if [ $# -eq 0 ]; then
   usage
 fi
 
@@ -94,8 +100,9 @@ if [ "$1" = "--version" ]; then
   print_version
 fi
 
+
 # Parse CLI arguments.
-while getopts ":i:o::h:v" opt; do
+while getopts "i:o:hv" opt; do
   case $opt in
     i) INPUT="$OPTARG" ;;
     o) OUTPUT="$OPTARG" ;;

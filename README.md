@@ -54,7 +54,7 @@ brew install ffmpeg
 
 ## Demo
 
-![Demo GIF](demo.gif)
+![Demo GIF](Demo.gif)
 
 
 ## License
