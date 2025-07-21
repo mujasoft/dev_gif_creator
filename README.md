@@ -2,7 +2,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Shell](https://img.shields.io/badge/shell-bash-blue)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
-![Demo](https://img.shields.io/badge/demo-available-blueviolet)
+![Demo](https://img.shields.io/badge/demo-available-green)
 
 Convert video files into **optimized GIFs** using `ffmpeg` — perfect for README demos and lightweight previews.
 
