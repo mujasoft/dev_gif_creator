@@ -1,0 +1,21 @@
+
+# Temporary palette files
+.palette_*.png
+
+# macOS system files
+.DS_Store
+
+# Backup files
+*~
+*.swp
+*.bak
+
+# VSCode config (if you use it)
+.vscode/
+
+# Logs or debug
+*.log
+
+# Shell history (if any)
+.history
+
