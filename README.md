@@ -24,7 +24,7 @@ Convert video files into **optimized GIFs** using `ffmpeg` — perfect for READM
 - Converts `.mp4`, `.mov`, `.mkv`, `.webm`, etc.
 - Uses palette generation for smaller, smoother GIFs.
 - Cleans up temporary files after use.
-- Can appends timestamps to avoid overwriting.
+- Can append timestamps to avoid overwriting output file.
 - Fully **offline**, no external dependencies besides `ffmpeg`.
 - Pure Bash implementation — portable & dependency-free (except `ffmpeg`)
 
