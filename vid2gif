@@ -1,0 +1,104 @@
+#!/bin/bash
+
+set -e
+
+# Supporting functions ======================================================= #
+function usage() {
+    echo ""
+    echo "Convert a video file (.mov, .mp4, etc.) to an optimized GIF using FFmpeg."
+    echo ""
+    echo "Usage:"
+    echo "  $0 -i <input_file> [-o <output_basename>]"
+    echo ""
+    echo "Options:"
+    echo "  -h    print this help text"
+    echo "  -i    Input video file (required)"
+    echo "  -o    Output base name (optional, default: output)"
+    echo ""
+    echo "Examples:"
+    echo "  $0 -i demo.mov"
+    echo "  $0 -i video.mp4 -o demo_gif"
+    echo ""
+    echo "Output:"
+    echo "  GIF will be saved as: <output>_YYYY-MM-DD_HH-MM-SS.gif"
+    echo ""
+    exit 1
+}
+
+convert_mov_to_gif() {
+    echo "*** Generating palette..."
+    ffmpeg -y -i "$1" -vf "fps=10,scale=640:-1:flags=lanczos,palettegen" "$2"
+    echo "*** Done"
+
+    echo "*** Creating optimized GIF..."
+    ffmpeg -i "$1" -i "$2" -filter_complex "fps=10,scale=640:-1:flags=lanczos[x];[x][1:v]paletteuse" "$3"
+    echo "*** Done"
+
+    echo "*** Cleaning up temporary palette..."
+    rm -f "$2"
+    echo "*** Done"
+    
+    echo ""
+    print_bold_white "*** GIF saved to: $3"
+}
+
+print_red() {
+  echo -e "\033[0;31m$1\033[0m"
+}
+
+print_bold_white() {
+  echo -e "\033[1;37m$1\033[0m"
+}
+
+# -x-
+
+# Parse CLI arguments.
+while getopts ":i:o::h" opt; do
+  case $opt in
+    i) INPUT="$OPTARG" ;;
+    o) OUTPUT="$OPTARG" ;;
+    h) usage ;;
+    \?) print_red "*** Invalid option -$OPTARG" >&2; usage ;;
+    :) print_red "*** Option -$OPTARG requires an argument." >&2; usage ;;
+  esac
+done
+
+# Check for required input.
+if [ -z "$INPUT" ]; then
+  print_red "*** Error: input file is required (-i)"
+  usage
+fi
+
+case "$INPUT" in
+  *.mp4|*.mov|*.avi|*.mkv|*.webm|*.flv|*.m4v|*.ts)
+    ;;
+  *)
+    print_red "*** Unsupported input format: $INPUT"
+    echo "*** Supported formats: mp4, mov, avi, mkv, webm, flv, m4v, ts"
+    exit 1
+    ;;
+esac
+
+# Check if ffmpeg is installed.
+if ! command -v ffmpeg &> /dev/null; then
+  print_red "*** Error: ffmpeg is not installed or not in your PATH."
+  echo "*** Install it using Homebrew (macOS): brew install ffmpeg"
+  echo "*** More: https://ffmpeg.org/download.html"
+  exit 1
+fi
+
+# Set timestamp and derived filenames.
+TS=$(date "+%Y-%m-%d_%H-%M-%S")
+PALETTE=".palette_${TS}.png"
+OUTPUT_NAME="${OUTPUT:-output}"
+
+# Build final output name based on suffix check.
+if expr "$OUTPUT_NAME" : '.*\.gif$' > /dev/null; then
+  OUTPUT_BASENAME="${OUTPUT_NAME%.gif}"
+else
+  OUTPUT_BASENAME="$OUTPUT_NAME"
+fi
+
+FINAL_OUTPUT="${OUTPUT_BASENAME}_${TS}.gif"
+
+convert_mov_to_gif "$INPUT" "$PALETTE" "$FINAL_OUTPUT"
