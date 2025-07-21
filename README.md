@@ -56,20 +56,15 @@ export PATH="$PATH:/path/to/this/repo"
 ./vid2gif -i clip.mp4 -o demo_gif
 ```
 
-## Output
-GIF will be saved as:
-```bash
-<output>_YYYY-MM-DD_HH-MM-SS.gif
-```
-
 ## Options
 
-| Flag                | Description                                  |
-|--------------       |----------------------------------------------|
-| `-i`                | Input video file (required)                  |
-| `-o`                | Output basename (optional, default: `output`)|
-| `-h --help`         | Show help message                            |
-| `-v --version`      | Show tool version                            |
+| Flag                | Description                                                           |
+|--------------       |----------------------------------------------                         |
+| `-i`                | Input video file (required)                                           |
+| `-o`                | Output name (optional, default: `output`)                             |
+| `-h --help`         | Show help message                                                     |
+| `-v --version`      | Show tool version                                                     |
+| `-t`                | Append a timestamp to output basename (Optional, default=False)       |
 
 
 
