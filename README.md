@@ -3,7 +3,8 @@
 ![Shell](https://img.shields.io/badge/shell-bash-blue)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
 ![Demo](https://img.shields.io/badge/demo-available-green)
-![Homebrew Tap](https://img.shields.io/badge/homebrew-install-green)
+[![Homebrew Tap](https://img.shields.io/badge/homebrew-install-green)](https://github.com/mujasoft/homebrew-tools)
+
 
 Convert video files into **optimized GIFs** using `ffmpeg` — perfect for README demos and lightweight previews.
 
