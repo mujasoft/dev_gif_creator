@@ -59,7 +59,7 @@ export PATH="$PATH:/path/to/this/repo"
 
 ```bash
 ./vid2gif -i input.mov
-./vid2gif -i clip.mp4 -o demo_gif
+./vid2gif -i clip.mp4 -o demo.gif
 ```
 
 ## Options
