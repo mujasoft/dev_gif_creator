@@ -3,6 +3,7 @@
 ![Shell](https://img.shields.io/badge/shell-bash-blue)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
 ![Demo](https://img.shields.io/badge/demo-available-green)
+![Homebrew Tap](https://img.shields.io/badge/homebrew-install-green)
 
 Convert video files into **optimized GIFs** using `ffmpeg` — perfect for README demos and lightweight previews.
 
@@ -33,18 +34,22 @@ Convert video files into **optimized GIFs** using `ffmpeg` — perfect for READM
 [ffmpeg](https://ffmpeg.org) must be installed and in your `$PATH`
 
 ```bash
-# macOS (Homebrew)
 brew install ffmpeg
 ```
 
 ## Installation
+### Option 1: Via Homebrew
+```bash
+brew tap mujasoft/tools
+brew install vid2gif
+```
 
-### Option 1: Install globally.
+### Option 2: Install globally.
 ```bash
 chmod +x vid2gif
 mv vid2gif /usr/local/bin/
 ```
-### Option 2: Add to path
+### Option 3: Add to path
 ```bash
 export PATH="$PATH:/path/to/this/repo"
 ```
