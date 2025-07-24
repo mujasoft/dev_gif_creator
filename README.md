@@ -64,6 +64,27 @@ export PATH="$PATH:/path/to/this/repo"
 
 ## Options
 
+```bash
+Convert a video file (.mov, .mp4, etc.) to an optimized GIF using FFmpeg.
+
+Usage:
+  ./vid2gif -i <input_file> [-o <output_basename> -t]
+
+Option(s):
+  -h --help       print this help text
+  -i              input video file (required)
+  -o              output base name (optional, default: output)
+  -t              add timestamp to output file (optional, default: false)
+  -v --version    print version
+
+Examples:
+  ./vid2gif -i demo.mov
+  ./vid2gif -i video.mp4 -o demo.gif -t
+
+Output:
+  GIF will be saved as: <output>.gif or output_YYYY-MM-DD_HH-MM-SS.gif
+```
+
 | Flag                | Description                                                           |
 |--------------       |----------------------------------------------                         |
 | `-i`                | Input video file (required)                                           |

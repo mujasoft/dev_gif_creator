@@ -32,21 +32,21 @@ function usage() {
     echo "Convert a video file (.mov, .mp4, etc.) to an optimized GIF using FFmpeg."
     echo ""
     echo "Usage:"
-    echo "  $0 -i <input_file> [-o <output_basename>]"
+    echo "  $0 -i <input_file> [-o <output_basename> -t]"
     echo ""
     echo "Option(s):"
-    echo "  -h --help    print this help text"
-    echo "  -i           Input video file (required)"
-    echo "  -o           Output base name (optional, default: output)"
-    echo "  -t           Add timestamp to output file"
-    echo "  -v --version Print version"
+    echo "  -h --help       print this help text"
+    echo "  -i              input video file (required)"
+    echo "  -o              output base name (optional, default: output)"
+    echo "  -t              add timestamp to output file (optional, default: false)"
+    echo "  -v --version    print version"
     echo ""
     echo "Examples:"
     echo "  $0 -i demo.mov"
-    echo "  $0 -i video.mp4 -o demo_gif"
+    echo "  $0 -i video.mp4 -o demo.gif -t"
     echo ""
     echo "Output:"
-    echo "  GIF will be saved as: <output>_YYYY-MM-DD_HH-MM-SS.gif"
+    echo "  GIF will be saved as: <output>.gif or output_YYYY-MM-DD_HH-MM-SS.gif"
     echo ""
     exit 1
 }
@@ -74,7 +74,7 @@ convert_mov_to_gif() {
 }
 
 print_version(){
-  export VERSION="1.0.0"
+  export VERSION="1.0.1"
   echo "vid2gif v$VERSION"
   exit 0
 }
