@@ -46,7 +46,7 @@ function usage() {
     echo "  $0 -i video.mp4 -o demo.gif -t"
     echo ""
     echo "Output:"
-    echo "  GIF will be saved as: <output>.gif or output_YYYY-MM-DD_HH-MM-SS.gif"
+    echo "  GIF will be saved as: <output>.gif or <output>_YYYY-MM-DD_HH-MM-SS.gif"
     echo ""
     exit 1
 }
