@@ -52,25 +52,33 @@ function usage() {
 }
 
 convert_mov_to_gif() {
+  input="$1"
+  palette="$2"
+  output="$3"
 
-    # In order to increase the quality of the resulting GIF, an intermediate 
-    # palette is generated and used which results in a gif that
-    # has higher resolution with a lower memory footprint.
+  # Extract input width using ffprobe
+  width=$(ffprobe -v error -select_streams v:0 -show_entries stream=width \
+          -of default=noprint_wrappers=1:nokey=1 "$input")
 
-    echo "*** Generating palette..."
-    ffmpeg -y -i "$1" -vf "fps=10,scale=640:-1:flags=lanczos,palettegen" "$2"
-    echo "*** Done"
+  # Decide target scale based on width
+  if [ "$width" -ge 1200 ]; then
+    scale_width=1024
+  elif [ "$width" -ge 900 ]; then
+    scale_width=960
+  else
+    scale_width=640
+  fi
 
-    echo "*** Creating optimized GIF..."
-    ffmpeg -i "$1" -i "$2" -filter_complex "fps=10,scale=640:-1:flags=lanczos[x];[x][1:v]paletteuse" "$3"
-    echo "*** Done"
+  echo "*** Detected input width: $width → scaling to $scale_width"
 
-    echo "*** Cleaning up temporary palette..."
-    rm -f "$2"
-    echo "*** Done"
-    
-    echo ""
-    print_bold_white "*** GIF saved to: $3"
+  echo "*** Generating palette..."
+  ffmpeg -y -i "$input" -vf "fps=10,scale=${scale_width}:-1:flags=lanczos,palettegen" "$palette"
+
+  echo "*** Creating optimized GIF..."
+  ffmpeg -y -i "$input" -i "$palette" \
+    -filter_complex "fps=10,scale=${scale_width}:-1:flags=lanczos[x];[x][1:v]paletteuse" "$output"
+
+  echo "*** GIF saved as: $output"
 }
 
 print_version(){
