@@ -29,6 +29,7 @@ Convert video files into **optimized GIFs** using `ffmpeg` — perfect for READM
 - Can append timestamps to avoid overwriting output file.
 - Fully **offline**, no external dependencies besides `ffmpeg`.
 - Pure Bash implementation — portable & dependency-free (except `ffmpeg`)
+- Batch mode
 
 ## Requirement(s)
 
@@ -65,24 +66,34 @@ export PATH="$PATH:/path/to/this/repo"
 ## Options
 
 ```bash
-Convert a video file (.mov, .mp4, etc.) to an optimized GIF using FFmpeg.
+Usage: ./vid2gif -i <input_file> [-o <output_basename>] [-t]
+       ./vid2gif -d <directory> [-t]
 
-Usage:
-  ./vid2gif -i <input_file> [-o <output_basename> -t]
+Convert a video file (.mp4, .mov, etc.) or an entire directory to optimized GIF(s) using FFmpeg.
 
-Option(s):
-  -h --help       print this help text
-  -i              input video file (required)
-  -o              output base name (optional, default: output)
-  -t              add timestamp to output file (optional, default: false)
-  -v --version    print version
+This is a simple offline tool that can convert your screen recordings to GIFs that you can later
+add to your READMEs, presentations and bug reproductions.
+
+Options(s):
+  -h, --help                Show this help message and exit
+  -v, --version             Print version information and exit
+  -t                        Append timestamp to output file
+
+For single file mode:
+  -i <file>                 Input video file (required for single file mode)
+  -o <basename>             Output base name (default: output)
+
+For batch mode:
+  -d <input_folder>         Path to folder containing videos
+  -k <output_folder>        Path to output folder. Defaults input folder.
 
 Examples:
   ./vid2gif -i demo.mov
-  ./vid2gif -i video.mp4 -o demo.gif -t
+  ./vid2gif -i video.mp4 -o demo -t # timestamps added
+  ./vid2gif -d ./videos/ -t # batch mode
 
 Output:
-  GIF will be saved as: <output>.gif or output_YYYY-MM-DD_HH-MM-SS.gif
+  GIF will be saved as: <output>.gif or <output>_YYYY-MM-DD_HH-MM-SS.gif
 ```
 
 | Flag                | Description                                                           |
@@ -90,6 +101,8 @@ Output:
 | `-i`                | Input video file (required)                                           |
 | `-o`                | Output name (optional, default: `output`)                             |
 | `-h --help`         | Show help message                                                     |
+| `-d`                | Input folder                                                          |
+| `-k`                | Output folder                                                         |
 | `-v --version`      | Show tool version                                                     |
 | `-t`                | Append a timestamp to output basename (Optional, default=False)       |
 

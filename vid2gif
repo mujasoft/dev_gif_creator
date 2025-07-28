@@ -24,37 +24,66 @@
 # THE SOFTWARE.
 
 
-set -e
+set -eo pipefail
+IFS=$'\n\t'
+
+# If script is interrupted, attempt clean up of temp palettes.
+trap_cleanup() {
+  rm -f ./.palette_*.png "$OUTPUT_DIR"/.palette_*.png 2>/dev/null
+  exit 1
+}
+
+trap trap_cleanup INT TERM
 
 # Supporting functions ======================================================= #
 function usage() {
     echo ""
-    echo "Convert a video file (.mov, .mp4, etc.) to an optimized GIF using FFmpeg."
+    echo "Usage: $0 -i <input_file> [-o <output_basename>] [-t]"
+    echo "       $0 -d <directory> [-t]"
     echo ""
-    echo "Usage:"
-    echo "  $0 -i <input_file> [-o <output_basename> -t]"
+    echo "Convert a video file (.mp4, .mov, etc.) or an entire directory to optimized GIF(s) using FFmpeg."
     echo ""
-    echo "Option(s):"
-    echo "  -h --help       print this help text"
-    echo "  -i              input video file (required)"
-    echo "  -o              output base name (optional, default: output)"
-    echo "  -t              add timestamp to output file (optional, default: false)"
-    echo "  -v --version    print version"
+    echo "This is a simple offline tool that can convert your screen recordings to GIFs that you can later"
+    echo "add to your READMEs, presentations and bug reproductions."
+    echo ""
+    echo "Options(s):"
+    echo "  -h, --help                Show this help message and exit"
+    echo "  -v, --version             Print version information and exit"
+    echo "  -t                        Append timestamp to output file"
+    echo ""
+    echo "For single file mode:"
+    echo "  -i <file>                 Input video file (required for single file mode)"
+    echo "  -o <basename>             Output base name (default: output)"
+    echo ""
+    echo "For batch mode:"
+    echo "  -d <input_folder>         Path to folder containing videos"
+    echo "  -k <output_folder>        Path to output folder. Defaults input folder."
     echo ""
     echo "Examples:"
     echo "  $0 -i demo.mov"
-    echo "  $0 -i video.mp4 -o demo.gif -t"
+    echo "  $0 -i video.mp4 -o demo -t # timestamps added"
+    echo "  $0 -d ./videos/ -t # batch mode"
     echo ""
     echo "Output:"
     echo "  GIF will be saved as: <output>.gif or <output>_YYYY-MM-DD_HH-MM-SS.gif"
     echo ""
-    exit 1
 }
+
 
 convert_mov_to_gif() {
   input="$1"
   palette="$2"
   output="$3"
+
+  case "$input" in
+    *.mp4|*.mov|*.avi|*.mkv|*.webm|*.flv|*.m4v|*.ts)
+      ;;
+    *)
+      print_red "Unsupported input format!"
+      log "Supported formats: mp4, mov, avi, mkv, webm, flv, m4v, ts"
+      exit 1
+      ;;
+  esac
 
   # Extract input width using ffprobe
   width=$(ffprobe -v error -select_streams v:0 -show_entries stream=width \
@@ -69,91 +98,192 @@ convert_mov_to_gif() {
     scale_width=640
   fi
 
-  echo "*** Detected input width: $width → scaling to $scale_width"
+  log "Detected input width: $width → scaling to $scale_width"
 
-  echo "*** Generating palette..."
+  log "Generating palette..."
   ffmpeg -y -i "$input" -vf "fps=10,scale=${scale_width}:-1:flags=lanczos,palettegen" "$palette"
 
-  echo "*** Creating optimized GIF..."
+  log "Creating optimized GIF..."
   ffmpeg -y -i "$input" -i "$palette" \
     -filter_complex "fps=10,scale=${scale_width}:-1:flags=lanczos[x];[x][1:v]paletteuse" "$output"
 
-  echo "*** GIF saved as: $output"
+  rm -rf "$palette"
+
+  log "GIF saved as: $output"
+}
+
+
+# Printers
+info() {
+  echo -e "\033[1;34m[INFO]\033[0m $1"
+}
+
+warn() {
+  echo -e "\033[1;33m[WARN]\033[0m $1"
+}
+
+error() {
+  echo -e "\033[1;31m[ERROR]\033[0m $1"
+}
+
+log() {
+  echo -e "• $1"
 }
 
 print_version(){
-  export VERSION="1.0.2"
+  export VERSION="1.0.3"
   echo "vid2gif v$VERSION"
   exit 0
 }
 
 print_red() {
-  echo -e "\033[0;31m$1\033[0m"
+  echo -e "\033[0;31m• $1\033[0m"
 }
 
 print_bold_white() {
   echo -e "\033[1;37m$1\033[0m"
 }
 
+success() {
+  echo -e "\033[1;32m✔ $1\033[0m"
+}
+
+
+# Long options ================================================================ #
 # Long help flag.
 if [ "$1" = "--help" ]; then
   usage
+  exit 0
 fi
 
 # Show help if no arguments were passed
 if [ $# -eq 0 ]; then
   usage
+  exit 1
 fi
 
 if [ "$1" = "--version" ]; then
   print_version
+  exit 0
 fi
 
-
-# Parse CLI arguments.
-while getopts "i:o:thv" opt; do
+# Parse arguments ============================================================= #
+while getopts "i:o:d:k:thv" opt; do
   case $opt in
     i) INPUT="$OPTARG" ;;
     o) OUTPUT="$OPTARG" ;;
-    h) usage ;;
+    d) INPUT_DIR="$OPTARG" ;;
+    h) usage && exit 0 ;;
     t) TIMESTAMP_REQUEST="1" ;;
     v) print_version ;;
-    \?) print_red "*** Invalid option -$OPTARG" >&2; usage ;;
-    :) print_red "*** Option -$OPTARG requires an argument." >&2; usage ;;
+    k) OUTPUT_DIR="$OPTARG" ;;
+    \?) print_red "Invalid option -$OPTARG" >&2; usage ;;
+    :) print_red "Option -$OPTARG requires an argument." >&2; usage ;;
   esac
 done
 
-# Check for required input.
-if [ -z "$INPUT" ]; then
-  print_red "*** Error: input file is required (-i)"
+# Parameter verification ====================================================== #
+if [ -n "$INPUT" ] && [ -n "$INPUT_DIR" ]; then
+  print_red "Please specify either -i (input file) OR -d (input directory), not both."
   usage
-fi
-
-case "$INPUT" in
-  *.mp4|*.mov|*.avi|*.mkv|*.webm|*.flv|*.m4v|*.ts)
-    ;;
-  *)
-    print_red "Unsupported input format!"
-    echo "Supported formats: mp4, mov, avi, mkv, webm, flv, m4v, ts"
-    exit 1
-    ;;
-esac
-
-# Check if ffmpeg is installed.
-if ! command -v ffmpeg &> /dev/null; then
-  print_red "Error: ffmpeg is not installed or not in your PATH!"
-  echo "Install it using Homebrew (macOS): brew install ffmpeg"
-  echo "More: https://ffmpeg.org/download.html"
   exit 1
 fi
 
+if [ -z "$INPUT" ] && [ -z "$INPUT_DIR" ]; then
+  print_red "ERROR: You must specify either -i (input file) OR -d (input directory)."
+  usage
+  exit 1
+fi
+
+if [ -n "$INPUT" ] && [ ! -f "$INPUT" ]; then
+  print_red "ERROR: The specified input file '$INPUT' does not exist."
+  exit 1
+fi
+
+# Check if ffmpeg is installed.
+if ! command -v ffmpeg &> /dev/null; then
+  print_red "ERROR: ffmpeg is not installed or not in your PATH!"
+  log "Install it using Homebrew (macOS): brew install ffmpeg"
+  log "More: https://ffmpeg.org/download.html"
+  exit 1
+fi
+
+# Batch mode ================================================================== #
+
+if [ -n "$INPUT_DIR" ]; then
+
+  # Save in the same directory by default.
+  OUTPUT_DIR="${OUTPUT_DIR:-$INPUT_DIR}"
+
+  if [ ! -d "$OUTPUT_DIR" ]; then
+    print_red "ERROR: Output directory '$OUTPUT_DIR' does not exist."
+    exit 1
+  fi
+
+  if [ ! -w "$OUTPUT_DIR" ]; then
+    print_red "ERROR: Cannot write to output directory '$OUTPUT_DIR'. Check permissions."
+    exit 1
+  fi
+  echo ""
+  log "━━━ Batch Mode ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  log "Input Directory : $INPUT_DIR"
+  log "Output Directory: $OUTPUT_DIR"
+  if [ -n "${TIMESTAMP_REQUEST:-}" ]; then
+    TIMESTAMP_STATE="enabled"
+  else
+    TIMESTAMP_STATE="disabled"
+  fi
+  log "Timestamp Mode  : $TIMESTAMP_STATE"
+  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+
+  export BAD_FILES=""
+  for file in "$INPUT_DIR"/*.{mp4,mov,avi,mkv,webm,flv,m4v,ts}; do
+    if [ -f "$file" ]; then
+
+      # Use the same name as the original filename.
+      BASENAME=$(basename "$file")
+      NAME="${BASENAME%.*}"
+      TS=$(date "+%Y%m%d_%H%M%S")
+      PALETTE="${OUTPUT_DIR}/.palette_${TS}.png"
+
+      # Honor timestamp request.
+      if [ -z "$TIMESTAMP_REQUEST" ]; then
+        OUTFILE="${NAME}.gif"
+      else
+        OUTFILE="${NAME}_${TS}.gif"
+      fi
+
+      log "Converting $file..."
+      # Throwing away the output because its too much. 
+      if ! convert_mov_to_gif "$file" "$PALETTE" "$OUTPUT_DIR"/"$OUTFILE" &> /dev/null; then
+        BAD_FILES="${BAD_FILES}\n- $file"
+      fi
+      log "done"
+      echo ""
+    fi
+  done
+
+  if [ -n "$BAD_FILES" ]; then
+    print_red "Some files could not be converted to GIFs:"
+    echo "$BAD_FILES"
+    exit 1
+  else
+    success "Batch conversion completed successfully!"
+    exit 0
+  fi
+
+fi
+
+
+# Single file mode ================================================ #
+
 # Set timestamp and derived filenames.
-TS=$(date "+%Y-%m-%d_%H-%M-%S")
-PALETTE=".palette_${TS}.png"
+TS=$(date "+%Y%m%d_%H%M%S")
 OUTPUT_NAME="${OUTPUT:-output}"
 
 # Build final output name based on suffix check.
-if expr "$OUTPUT_NAME" : '.*\.gif$' > /dev/null; then
+if [[ "$OUTPUT_NAME" == *.gif ]]; then
   OUTPUT_BASENAME="${OUTPUT_NAME%.gif}"
 else
   OUTPUT_BASENAME="$OUTPUT_NAME"
@@ -163,6 +293,10 @@ if [ -z "$TIMESTAMP_REQUEST" ]; then
   FINAL_OUTPUT="${OUTPUT_BASENAME}.gif"
 else
   FINAL_OUTPUT="${OUTPUT_BASENAME}_${TS}.gif"
-fi 
+fi
 
-convert_mov_to_gif "$INPUT" "$PALETTE" "$FINAL_OUTPUT"
+PALETTE="$(dirname "$FINAL_OUTPUT")/.palette_${TS}.png"
+
+convert_mov_to_gif "$INPUT" "$PALETTE" "$FINAL_OUTPUT" &> /dev/null
+success "Conversion completed successfully."
+exit 0
