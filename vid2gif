@@ -35,7 +35,7 @@ function usage() {
     echo "Usage: $0 -i <input_file> [-o <output_basename>] [-t]"
     echo "       $0 -d <directory> [-t]"
     echo ""
-    echo "Convert a video file (.mp4, .mov, etc.) or an entire directory to an optimized GIF using FFmpeg."
+    echo "Convert a video file (.mp4, .mov, etc.) or an entire directory to optimized GIF(s) using FFmpeg."
     echo ""
     echo "This is a simple offline tool that can convert your screen recordings to GIFs that you can later"
     echo "add to your READMEs, presentations and bug reproductions."
