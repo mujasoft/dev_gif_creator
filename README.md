@@ -110,6 +110,10 @@ Output:
 
 
 
+## Why the rename?
+
+The project was renamed from vid2gif to gif4docs to avoid naming conflicts and better reflect its purpose: generating optimized GIFs for technical documentation.
+
 ## License
 
 MIT License — see [LICENSE](./LICENSE) for details.
