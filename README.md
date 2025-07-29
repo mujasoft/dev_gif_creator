@@ -87,7 +87,7 @@ For single file mode:
 
 For batch mode:
   -d <input_folder>         Path to folder containing videos
-  -k <output_folder>        Path to output folder. Defaults input folder.
+  -k <output_folder>        Path to output folder. Defaults to input folder.
 
 Examples:
   ./gif4docs -i demo.mov
