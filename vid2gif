@@ -57,7 +57,7 @@ function usage() {
     echo ""
     echo "For batch mode:"
     echo "  -d <input_folder>         Path to folder containing videos"
-    echo "  -k <output_folder>        Path to output folder. Defaults input folder."
+    echo "  -k <output_folder>        Path to output folder. Defaults to <input_folder>"
     echo ""
     echo "Examples:"
     echo "  $0 -i demo.mov"
