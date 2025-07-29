@@ -195,6 +195,18 @@ if [ -z "$INPUT" ] && [ -z "$INPUT_DIR" ]; then
   exit 1
 fi
 
+if [ -n "${INPUT_DIR:-}" ] && [ -n "${OUTPUT:-}" ]; then
+  print_red "ERROR: The -o option (output base name) cannot be used with -d (directory mode)."
+  usage
+  exit 1
+fi
+
+if [ -n "${INPUT:-}" ] && [ -n "${OUTPUT_DIR:-}" ]; then
+  print_red "ERROR: The -k option (output directory) cannot be used with -i (input directory)."
+  usage
+  exit 1
+fi
+
 if [ -n "$INPUT" ] && [ ! -f "$INPUT" ]; then
   print_red "ERROR: The specified input file '$INPUT' does not exist."
   exit 1
