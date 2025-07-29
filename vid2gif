@@ -24,10 +24,16 @@
 # THE SOFTWARE.
 
 
-set -e
+set -eo pipefail
+IFS=$'\n\t'
 
-# If script is interrupted, attempt clean up.
-trap 'rm -f ./.palette_*.png "$OUTPUT_DIR"/.palette_*.png 2>/dev/null; exit 1' INT TERM 
+# If script is interrupted, attempt clean up of temp palettes.
+trap_cleanup() {
+  rm -f ./.palette_*.png "$OUTPUT_DIR"/.palette_*.png 2>/dev/null
+  exit 1
+}
+
+trap trap_cleanup INT TERM
 
 # Supporting functions ======================================================= #
 function usage() {
@@ -106,6 +112,8 @@ convert_mov_to_gif() {
   log "GIF saved as: $output"
 }
 
+
+# Printers
 info() {
   echo -e "\033[1;34m[INFO]\033[0m $1"
 }
@@ -135,6 +143,11 @@ print_red() {
 print_bold_white() {
   echo -e "\033[1;37m$1\033[0m"
 }
+
+success() {
+  echo -e "\033[1;32m✔ $1\033[0m"
+}
+
 
 # Long options ================================================================ #
 # Long help flag.
@@ -211,12 +224,18 @@ if [ -n "$INPUT_DIR" ]; then
     print_red "ERROR: Cannot write to output directory '$OUTPUT_DIR'. Check permissions."
     exit 1
   fi
-  log ""
+  echo ""
   log "━━━ Batch Mode ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   log "Input Directory : $INPUT_DIR"
   log "Output Directory: $OUTPUT_DIR"
-  log "Timestamp Mode  : ${TIMESTAMP_REQUEST:+enabled}${TIMESTAMP_REQUEST:-disabled}"
-  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+  if [ -n "${TIMESTAMP_REQUEST:-}" ]; then
+    TIMESTAMP_STATE="enabled"
+  else
+    TIMESTAMP_STATE="disabled"
+  fi
+  log "Timestamp Mode  : $TIMESTAMP_STATE"
+  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
 
   export BAD_FILES=""
   for file in "$INPUT_DIR"/*.{mp4,mov,avi,mkv,webm,flv,m4v,ts}; do
@@ -240,7 +259,8 @@ if [ -n "$INPUT_DIR" ]; then
       if ! convert_mov_to_gif "$file" "$PALETTE" "$OUTPUT_DIR"/"$OUTFILE" &> /dev/null; then
         BAD_FILES="${BAD_FILES}\n- $file"
       fi
-      log "done\n"
+      log "done"
+      echo ""
     fi
   done
 
@@ -249,7 +269,7 @@ if [ -n "$INPUT_DIR" ]; then
     echo "$BAD_FILES"
     exit 1
   else
-    log "Batch conversion completed successfully!"
+    success "Batch conversion completed successfully!"
     exit 0
   fi
 
@@ -263,7 +283,7 @@ TS=$(date "+%Y%m%d_%H%M%S")
 OUTPUT_NAME="${OUTPUT:-output}"
 
 # Build final output name based on suffix check.
-if expr "$OUTPUT_NAME" : '.*\.gif$' > /dev/null; then
+if [[ "$OUTPUT_NAME" == *.gif ]]; then
   OUTPUT_BASENAME="${OUTPUT_NAME%.gif}"
 else
   OUTPUT_BASENAME="$OUTPUT_NAME"
@@ -278,5 +298,5 @@ fi
 PALETTE="$(dirname "$FINAL_OUTPUT")/.palette_${TS}.png"
 
 convert_mov_to_gif "$INPUT" "$PALETTE" "$FINAL_OUTPUT" &> /dev/null
-log "Conversion completed successfully."
+success "Conversion completed successfully."
 exit 0
