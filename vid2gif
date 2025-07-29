@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# vid2gif - Convert video files (.mp4, .mov, etc.) into optimized GIFs using FFmpeg
+# gif4docs - Convert video files (.mp4, .mov, etc.) into optimized GIFs using FFmpeg
 #
 # Author: Mujaheed Khan (https://github.com/mujasoft)
 # License: MIT
@@ -132,7 +132,7 @@ log() {
 
 print_version(){
   export VERSION="1.0.3"
-  echo "vid2gif v$VERSION"
+  echo "gif4docs v$VERSION"
   exit 0
 }
 

@@ -1,4 +1,4 @@
-# vid2gif
+# gif4docs
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Shell](https://img.shields.io/badge/shell-bash-blue)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
@@ -43,13 +43,13 @@ brew install ffmpeg
 ### Option 1: Via Homebrew
 ```bash
 brew tap mujasoft/tools
-brew install vid2gif
+brew install gif4docs
 ```
 
 ### Option 2: Install globally.
 ```bash
-chmod +x vid2gif
-mv vid2gif /usr/local/bin/
+chmod +x gif4docs
+mv gif4docs /usr/local/bin/
 ```
 ### Option 3: Add to path
 ```bash
@@ -59,15 +59,15 @@ export PATH="$PATH:/path/to/this/repo"
 ## Usage
 
 ```bash
-./vid2gif -i input.mov
-./vid2gif -i clip.mp4 -o demo.gif
+./gif4docs -i input.mov
+./gif4docs -i clip.mp4 -o demo.gif
 ```
 
 ## Options
 
 ```bash
-Usage: ./vid2gif -i <input_file> [-o <output_basename>] [-t]
-       ./vid2gif -d <directory> [-t]
+Usage: ./gif4docs -i <input_file> [-o <output_basename>] [-t]
+       ./gif4docs -d <directory> [-t]
 
 Convert a video file (.mp4, .mov, etc.) or an entire directory to optimized GIF(s) using FFmpeg.
 
@@ -88,9 +88,9 @@ For batch mode:
   -k <output_folder>        Path to output folder. Defaults input folder.
 
 Examples:
-  ./vid2gif -i demo.mov
-  ./vid2gif -i video.mp4 -o demo -t # timestamps added
-  ./vid2gif -d ./videos/ -t # batch mode
+  ./gif4docs -i demo.mov
+  ./gif4docs -i video.mp4 -o demo -t # timestamps added
+  ./gif4docs -d ./videos/ -t # batch mode
 
 Output:
   GIF will be saved as: <output>.gif or <output>_YYYY-MM-DD_HH-MM-SS.gif
