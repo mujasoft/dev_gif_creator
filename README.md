@@ -10,7 +10,7 @@ Convert video files into **optimized GIFs** using `ffmpeg` — perfect for READM
 
 > I found myself using this script often, so I made it a standalone tool — something you can drop into your `$PATH` and run whenever you need a clean GIF from a video.
 
-#### Formerly known as "vid2gif".
+Formerly known as "vid2gif".
 
 ## Demo
 
