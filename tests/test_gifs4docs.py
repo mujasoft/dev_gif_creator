@@ -14,13 +14,13 @@ import os
 def test_single_file_conversion(tmp_path):
     """Convert one simple file and verify it exists"""
 
-    mov = Path("assets") / "pattern.mov"
+    mov = Path("tests") / "assets" / "pattern.mov"
     mov_path = Path(mov)
     gif_path = tmp_path / "pattern.gif"
 
     # Run gifs4docs CLI
     subprocess.run([
-        "../gif4docs", "-i", mov_path, "-o", gif_path
+        "./gif4docs", "-i", mov_path, "-o", gif_path
     ], check=True)
 
     # Assert the GIF was created
@@ -31,7 +31,7 @@ def test_single_file_conversion(tmp_path):
 def test_version():
     """Make sure version string is updated."""
 
-    result = subprocess.run(["../gif4docs", "-v"],
+    result = subprocess.run(["./gif4docs", "-v"],
                             capture_output=True,
                             text=True,
                             check=True
@@ -46,7 +46,7 @@ def test_version():
 def test_help():
     """Make sure help text works."""
 
-    result = subprocess.run(["../gif4docs", "-h"], capture_output=True,
+    result = subprocess.run(["./gif4docs", "-h"], capture_output=True,
                             text=True, check=True)
     assert "Usage" in result.stdout
 
@@ -56,7 +56,7 @@ def test_batch_file_conversion(tmp_path):
 
     mov_folder_path = Path("assets/videos")
 
-    result = subprocess.run(["../gif4docs", "-d", mov_folder_path,
+    result = subprocess.run(["./gif4docs", "-d", mov_folder_path,
                              "-k", tmp_path],
                             capture_output=True,
                             text=True,

@@ -120,8 +120,7 @@ pip3 install pytest
 To run the entire suite:
 
 ```bash
-cd $GIF4DOCS_REPO_DIR/tests/
-pytest
+pytest # it will automatically find the test folder
 ```
 This suite tests:
 - version no.
