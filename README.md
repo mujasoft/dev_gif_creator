@@ -109,6 +109,26 @@ Output:
 | `-t`                | Append a timestamp to output basename (Optional, default=False)       |
 
 
+## How to run regression test suite?
+
+
+You will need pytest.
+```bash
+pip3 install pytest
+```
+
+To run the entire suite:
+
+```bash
+cd $GIF4DOCS_REPO_DIR/tests/
+pytest
+```
+This suite tests:
+- version no.
+- help text
+- single file mode
+- output file mode
+
 
 ## Why the rename?
 
