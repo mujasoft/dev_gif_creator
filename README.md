@@ -130,17 +130,6 @@ This suite tests:
 
 Example Output:
 ```bash
-❯ pytest
-============================================================= test session starts =============================================================
-platform darwin -- Python 3.9.10, pytest-8.4.1, pluggy-1.6.0 -- /Users/mujaheedkhan/.pyenv/versions/3.9.10/bin/python3.9
-cachedir: .pytest_cache
-metadata: {'Python': '3.9.10', 'Platform': 'macOS-15.5-arm64-arm-64bit', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.9.0', 'html': '4.1.1', 'metadata': '3.1.1', 'rich': '0.2.0'}}
-rootdir: /Users/mujaheedkhan/Desktop/development/gif4docs
-configfile: pytest.ini
-testpaths: tests
-plugins: anyio-4.9.0, html-4.1.1, metadata-3.1.1, rich-0.2.0
-collected 4 items
-
 tests/test_gifs4docs.py::test_single_file_conversion PASSED                                                                             [ 25%]
 tests/test_gifs4docs.py::test_version PASSED                                                                                            [ 50%]
 tests/test_gifs4docs.py::test_help PASSED                                                                                               [ 75%]
